@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <title>Data Update</title>
+
+  <style>
+    :root {
+      --bg-gradient-start: #f0f9ff;
+      --bg-gradient-mid: #e0f2fe;
+      --bg-gradient-end: #bae6fd;
+
+      --primary: #0284c7;
+      --primary-light: #38bdf8;
+      --primary-dark: #0369a1;
+      --primary-glow: rgba(56, 189, 248, 0.28);
+      --primary-gradient: linear-gradient(135deg, #38bdf8 0%, #0284c7 50%, #0369a1 100%);
+      
+      --card-bg: rgba(255, 255, 255, 0.88);
+      --card-border: rgba(255, 255, 255, 0.95);
+      
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-sub: #334155;
+      
+      --field-bg: rgba(248, 250, 252, 0.85);
+      --field-border: #cbd5e1;
+      --field-focus-bg: #ffffff;
+
+      --danger: #f43f5e;
+      --danger-dark: #e11d48;
+      --danger-gradient: linear-gradient(135deg, #fb7185 0%, #f43f5e 50%, #e11d48 100%);
+      --danger-bg: rgba(244, 63, 94, 0.08);
+      
+      --radius-xl: 24px;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-end) 100%);
+      font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(16px, 4vw, 40px) 16px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .bg-orb-1 {
+      position: absolute;
+      top: -120px;
+      left: -100px;
+      width: 400px;
+      height: 400px;
+      background: rgba(56, 189, 248, 0.35);
+      filter: blur(90px);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .bg-orb-2 {
+      position: absolute;
+      bottom: -120px;
+      right: -100px;
+      width: 420px;
+      height: 420px;
+      background: rgba(14, 165, 233, 0.25);
+      filter: blur(100px);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .bg-orb-3 {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 500px;
+      height: 500px;
+      background: rgba(186, 230, 253, 0.5);
+      filter: blur(120px);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 580px;
+      background: var(--card-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1.5px solid var(--card-border);
+      border-radius: var(--radius-xl);
+      box-shadow: 
+        0 20px 50px -12px rgba(14, 165, 233, 0.18),
+        0 4px 16px rgba(15, 23, 42, 0.04),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+      overflow: hidden;
+      position: relative;
+      z-index: 10;
+      transition: border-color 0.3s ease;
+    }
+
+    .card-header {
+      background: var(--primary-gradient);
+      padding: clamp(28px, 6vw, 36px) clamp(24px, 6vw, 36px) clamp(22px, 5vw, 30px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-header::before {
+      content: '';
+      position: absolute;
+      right: -40px;
+      top: -40px;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.12);
+      pointer-events: none;
+    }
+
+    .card-header::after {
+      content: '';
+      position: absolute;
+      right: 60px;
+      bottom: -60px;
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      pointer-events: none;
+    }
+
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .card-header h1 {
+      font-size: clamp(24px, 5vw, 28px);
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.4px;
+      line-height: 1.2;
+      position: relative;
+      z-index: 1;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    .card-header p {
+      margin-top: 8px;
+      color: rgba(240, 249, 255, 0.92);
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.5;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-body {
+      padding: clamp(20px, 6vw, 32px) clamp(24px, 6vw, 36px) clamp(28px, 6vw, 36px);
+    }
+
+    .field {
+      margin-bottom: 22px;
+    }
+
+    .field-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-sub);
+      margin-bottom: 8px;
+    }
+
+    .field-label .required {
+      color: var(--danger);
+    }
+
+    .icon-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: #e0f2fe;
+      color: var(--primary);
+      box-shadow: 0 2px 6px rgba(56, 189, 248, 0.15);
+      transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+
+    .field:focus-within .icon-badge {
+      transform: scale(1.08);
+      background: #bae6fd;
+      color: var(--primary-dark);
+    }
+
+    .icon-badge svg {
+      width: 17px;
+      height: 17px;
+      stroke-width: 2.2;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    textarea {
+      width: 100%;
+      background: var(--field-bg);
+      border: 1.5px solid var(--field-border);
+      border-radius: var(--radius-md);
+      padding: 13px 16px;
+      font-size: 14.5px;
+      font-family: inherit;
+      color: var(--text-main);
+      outline: none;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.03);
+    }
+
+    /* Format teks placeholder samar-samar pada input date */
+    input[type="date"] {
+      position: relative;
+    }
+
+    input[type="date"]:invalid {
+      color: #94a3b8;
+    }
+
+    input[type="date"]::-webkit-datetime-edit-text,
+    input[type="date"]::-webkit-datetime-edit-month-field,
+    input[type="date"]::-webkit-datetime-edit-day-field,
+    input[type="date"]::-webkit-datetime-edit-year-field {
+      color: #94a3b8;
+    }
+
+    input[type="date"]:focus::-webkit-datetime-edit-text,
+    input[type="date"]:valid::-webkit-datetime-edit-text,
+    input[type="date"]:focus::-webkit-datetime-edit-month-field,
+    input[type="date"]:valid::-webkit-datetime-edit-month-field,
+    input[type="date"]:focus::-webkit-datetime-edit-day-field,
+    input[type="date"]:valid::-webkit-datetime-edit-day-field,
+    input[type="date"]:focus::-webkit-datetime-edit-year-field,
+    input[type="date"]:valid::-webkit-datetime-edit-year-field {
+      color: var(--text-main);
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.2s ease;
+      filter: invert(35%) sepia(85%) saturate(1800%) hue-rotate(175deg) brightness(95%) contrast(90%);
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator:hover {
+      opacity: 1;
+    }
+
+    input[type="text"]::placeholder,
+    textarea::placeholder {
+      color: #94a3b8;
+    }
+
+    input[type="text"]:focus,
+    input[type="date"]:focus,
+    textarea:focus {
+      background: var(--field-focus-bg);
+      border-color: var(--primary-light);
+      box-shadow: 
+        0 0 0 4px var(--primary-glow),
+        0 2px 8px rgba(14, 165, 233, 0.08);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 105px;
+      line-height: 1.6;
+    }
+
+    .upload-zone {
+      border: 2px dashed #7dd3fc;
+      border-radius: var(--radius-lg);
+      background: rgba(240, 249, 255, 0.65);
+      padding: 24px 20px;
+      text-align: center;
+      transition: all 0.25s ease;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .upload-zone.dragover,
+    .upload-zone:hover {
+      border-color: var(--primary);
+      background: rgba(224, 242, 254, 0.85);
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+    }
+
+    .upload-icon-circle {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 12px;
+      border-radius: 50%;
+      background: #e0f2fe;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease;
+      box-shadow: 0 4px 10px rgba(56, 189, 248, 0.15);
+    }
+
+    .upload-zone:hover .upload-icon-circle {
+      transform: translateY(-3px) scale(1.05);
+      background: #bae6fd;
+    }
+
+    .upload-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #ffffff;
+      border: 1.5px solid #bae6fd;
+      border-radius: var(--radius-sm);
+      padding: 9px 18px;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--primary-dark);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-top: 8px;
+      box-shadow: 0 2px 6px rgba(14, 165, 233, 0.08);
+    }
+
+    .upload-btn:hover {
+      background: #f0f9ff;
+      border-color: var(--primary-light);
+      transform: translateY(-1px);
+    }
+
+    .upload-hint {
+      display: block;
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    #fileInput { display: none; }
+
+    .file-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .file-chip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      font-size: 13px;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .file-chip-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .file-chip-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--text-main);
+      font-weight: 500;
+    }
+
+    .file-chip-size {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .file-chip-remove {
+      border: none;
+      background: rgba(244, 63, 94, 0.1);
+      color: var(--danger-dark);
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      font-size: 15px;
+      cursor: pointer;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .file-chip-remove:hover {
+      background: var(--danger-dark);
+      color: #ffffff;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 14px 20px;
+      font-size: 14.5px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .btn:active { transform: translateY(1px); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .btn-submit {
+      background: var(--primary-gradient);
+      color: #ffffff;
+      box-shadow: 0 8px 20px -4px rgba(2, 132, 199, 0.45);
+    }
+
+    .btn-submit:hover:not(:disabled) {
+      box-shadow: 0 12px 25px -3px rgba(2, 132, 199, 0.55);
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+    }
+
+    .btn-cancel {
+      background: var(--danger-gradient);
+      color: #ffffff;
+      box-shadow: 0 8px 20px -4px rgba(244, 63, 94, 0.35);
+    }
+
+    .btn-cancel:hover:not(:disabled) {
+      box-shadow: 0 12px 25px -3px rgba(244, 63, 94, 0.45);
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      border-top-color: #ffffff;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .status-banner {
+      margin: 0 clamp(24px, 6vw, 36px) 16px;
+      padding: 0;
+      max-height: 0;
+      overflow: hidden;
+      border-radius: var(--radius-md);
+      font-size: 13.5px;
+      font-weight: 600;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .status-banner.show {
+      max-height: 100px;
+      padding: 14px 18px;
+      opacity: 1;
+    }
+
+    .status-banner.success { 
+      background: #f0fdf4; 
+      color: #15803d; 
+      border: 1.5px solid #bbf7d0; 
+    }
+    .status-banner.error { 
+      background: #fff1f2; 
+      color: #be123c; 
+      border: 1.5px solid #fecdd3; 
+    }
+    .status-banner.loading { 
+      background: #f0f9ff; 
+      color: #0369a1; 
+      border: 1.5px solid #bae6fd; 
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 0;
+        align-items: stretch;
+      }
+
+      .card {
+        border-radius: 0;
+        min-height: 100vh;
+        min-height: 100dvh;
+        border: none;
+        box-shadow: none;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .card-body {
+        flex: 1;
+      }
+
+      .actions {
+        grid-template-columns: 1fr;
+      }
+
+      .btn-submit {
+        order: -1;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-orb-1"></div>
+  <div class="bg-orb-2"></div>
+  <div class="bg-orb-3"></div>
+
+  <form class="card" id="dataForm" novalidate>
+    <div class="card-header">
+      <div class="header-badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        System Portal
+      </div>
+      <h1>Data Update</h1>
+      <p>Submit your structured updates seamlessly to Google Spreadsheet</p>
+    </div>
+
+    <div class="status-banner" id="statusBanner"></div>
+
+    <div class="card-body">
+
+      <!-- Date Field dengan Placeholder dd/mm/yyyy samar-samar -->
+      <div class="field">
+        <label class="field-label" for="dateInput">
+          <span class="icon-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          </span>
+          Date <span class="required">*</span>
+        </label>
+        <input type="date" id="dateInput" placeholder="dd/mm/yyyy" required>
+      </div>
+
+      <!-- Major Update Field -->
+      <div class="field">
+        <label class="field-label" for="majorUpdate">
+          <span class="icon-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          </span>
+          Major Update
+        </label>
+        <input type="text" id="majorUpdate" placeholder="e.g. System Upgrade / Policy Change">
+      </div>
+
+      <!-- Description Update Field -->
+      <div class="field">
+        <label class="field-label" for="descriptionUpdate">
+          <span class="icon-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </span>
+          Description Update
+        </label>
+        <input type="text" id="descriptionUpdate" placeholder="Brief summary of key changes">
+      </div>
+
+      <!-- Additional Information Field -->
+      <div class="field">
+        <label class="field-label" for="additionalInfo">
+          <span class="icon-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          </span>
+          Additional Information
+        </label>
+        <textarea id="additionalInfo" placeholder="Add extra notes or contextual remarks..."></textarea>
+      </div>
+
+      <!-- File Upload Zone Field (Dipindahkan ke Paling Akhir) -->
+      <div class="field" style="margin-bottom: 26px;">
+        <label class="field-label">
+          <span class="icon-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          </span>
+          Upload Attachments <span style="font-weight:400; color:var(--text-muted); font-size:12px;">(Optional, max 2)</span>
+        </label>
+
+        <div class="upload-zone" id="uploadZone">
+          <div class="upload-icon-circle">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/></svg>
+          </div>
+          <span style="font-size:14px; font-weight:600; color:var(--text-main);">Drag & drop files here or</span>
+          <div>
+            <label class="upload-btn" for="fileInput">Browse Files</label>
+          </div>
+          <input type="file" id="fileInput" multiple>
+          <span class="upload-hint">Up to 2 files &bull; Max 5MB per file</span>
+          <div class="file-list" id="fileList"></div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="actions">
+        <button type="submit" class="btn btn-submit" id="submitBtn">
+          <span>Submit Record</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+        <button type="button" class="btn btn-cancel" id="cancelBtn">Reset</button>
+      </div>
+
+    </div>
+  </form>
+
+  <script>
+    var MAX_FILES = 2;
+    var MAX_FILE_SIZE_MB = 5;
+    var selectedFiles = [];
+
+    var fileInput = document.getElementById('fileInput');
+    var uploadZone = document.getElementById('uploadZone');
+    var fileListEl = document.getElementById('fileList');
+    var form = document.getElementById('dataForm');
+    var submitBtn = document.getElementById('submitBtn');
+    var cancelBtn = document.getElementById('cancelBtn');
+    var statusBanner = document.getElementById('statusBanner');
+
+    ['dragenter', 'dragover'].forEach(function(eventName) {
+      uploadZone.addEventListener(eventName, function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        uploadZone.classList.add('dragover');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(function(eventName) {
+      uploadZone.addEventListener(eventName, function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        uploadZone.classList.remove('dragover');
+      }, false);
+    });
+
+    uploadZone.addEventListener('drop', function(e) {
+      var dt = e.dataTransfer;
+      var files = dt.files;
+      handleFiles(Array.prototype.slice.call(files));
+    });
+
+    fileInput.addEventListener('change', function (e) {
+      var newFiles = Array.prototype.slice.call(e.target.files);
+      handleFiles(newFiles);
+      fileInput.value = '';
+    });
+
+    function handleFiles(newFiles) {
+      for (var i = 0; i < newFiles.length; i++) {
+        var f = newFiles[i];
+        if (selectedFiles.length >= MAX_FILES) {
+          showStatus('error', 'Maximum limit reached (Max ' + MAX_FILES + ' files).');
+          break;
+        }
+        if (f.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+          showStatus('error', '"' + f.name + '" exceeds ' + MAX_FILE_SIZE_MB + 'MB size limit.');
+          continue;
+        }
+        selectedFiles.push(f);
+      }
+      renderFileList();
+    }
+
+    function formatFileSize(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / 1048576).toFixed(1) + ' MB';
+    }
+
+    function renderFileList() {
+      fileListEl.innerHTML = '';
+      selectedFiles.forEach(function (f, idx) {
+        var chip = document.createElement('div');
+        chip.className = 'file-chip';
+
+        var infoDiv = document.createElement('div');
+        infoDiv.className = 'file-chip-info';
+
+        var fileIcon = document.createElement('span');
+        fileIcon.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>';
+
+        var nameSpan = document.createElement('span');
+        nameSpan.className = 'file-chip-name';
+        nameSpan.textContent = f.name;
+
+        var sizeSpan = document.createElement('span');
+        sizeSpan.className = 'file-chip-size';
+        sizeSpan.textContent = '(' + formatFileSize(f.size) + ')';
+
+        infoDiv.appendChild(fileIcon);
+        infoDiv.appendChild(nameSpan);
+        infoDiv.appendChild(sizeSpan);
+
+        var removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'file-chip-remove';
+        removeBtn.innerHTML = '&times;';
+        removeBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          selectedFiles.splice(idx, 1);
+          renderFileList();
+        });
+
+        chip.appendChild(infoDiv);
+        chip.appendChild(removeBtn);
+        fileListEl.appendChild(chip);
+      });
+    }
+
+    function fileToBase64(file) {
+      return new Promise(function (resolve, reject) {
+        var reader = new FileReader();
+        reader.onload = function () { resolve(reader.result.split(',')[1]); };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    var hideTimer = null;
+    function showStatus(type, message) {
+      statusBanner.className = 'status-banner ' + type + ' show';
+      statusBanner.textContent = message;
+      if (hideTimer) clearTimeout(hideTimer);
+      if (type !== 'loading') {
+        hideTimer = setTimeout(function () {
+          statusBanner.classList.remove('show');
+        }, 5000);
+      }
+    }
+
+    function setLoading(isLoading) {
+      submitBtn.disabled = isLoading;
+      cancelBtn.disabled = isLoading;
+      submitBtn.innerHTML = isLoading
+        ? '<span class="spinner"></span> Processing...'
+        : '<span>Submit Record</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      var dateVal = document.getElementById('dateInput').value;
+      if (!dateVal) {
+        showStatus('error', 'Please select a valid date.');
+        return;
+      }
+
+      setLoading(true);
+      showStatus('loading', 'Submitting your update to Google Sheets...');
+
+      Promise.all(selectedFiles.map(function (f) {
+        return fileToBase64(f).then(function (data) {
+          return { name: f.name, type: f.type, data: data };
+        });
+      })).then(function (filesPayload) {
+        var payload = {
+          date: dateVal,
+          majorUpdate: document.getElementById('majorUpdate').value,
+          descriptionUpdate: document.getElementById('descriptionUpdate').value,
+          additionalInfo: document.getElementById('additionalInfo').value,
+          files: filesPayload
+        };
+
+        if (typeof google !== 'undefined' && google.script && google.script.run) {
+          google.script.run
+            .withSuccessHandler(function (res) {
+              setLoading(false);
+              if (res.success) {
+                showStatus('success', res.message);
+                form.reset();
+                selectedFiles = [];
+                renderFileList();
+              } else {
+                showStatus('error', res.message);
+              }
+            })
+            .withFailureHandler(function (err) {
+              setLoading(false);
+              showStatus('error', 'Error: ' + err.message);
+            })
+            .processForm(payload);
+        } else {
+          setTimeout(function() {
+            setLoading(false);
+            showStatus('success', 'Form submitted successfully (Preview Mode).');
+            form.reset();
+            selectedFiles = [];
+            renderFileList();
+          }, 1200);
+        }
+      }).catch(function (err) {
+        setLoading(false);
+        showStatus('error', 'Error preparing attachments: ' + err.message);
+      });
+    });
+
+    cancelBtn.addEventListener('click', function () {
+      form.reset();
+      selectedFiles = [];
+      renderFileList();
+      statusBanner.classList.remove('show');
+    });
+  </script>
+
+</body>
+</html>
